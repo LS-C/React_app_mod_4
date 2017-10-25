@@ -9,14 +9,13 @@ import LoadingCard from "./components/mainpage/LoadingCard";
 import EditCard from "./components/mainpage/EditCard";
 import Jobs from "./components/pages/Jobs";
 import Contact from "./components/pages/Contact";
-
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
 import { Button, Grid } from "semantic-ui-react";
+
 
 class App extends Component {
   constructor() {
-    super();
+    super()
 
     this.state = {
       contacts: [],
@@ -30,8 +29,42 @@ class App extends Component {
   componentDidMount() {
     fetch("https://randomuser.me/api/?results=25")
       .then(res => res.json())
-      .then(json => this.setState({ contacts: json.results }));
+      .then(json => this.postData(json))
+      .then(json => this.fetchDataSetState());
   }
+
+  postData = data => {
+    fetch("http://localhost:3000/users", {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+
+  };
+
+  patchData = data => {
+    fetch("http://localhost:3000/users/" + data.id, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      method: "PATCH",
+      body: JSON.stringify(data)
+    });
+  };
+
+  fetchDataSetState = () => {
+    fetch("http://localhost:3000/users")
+      .then(res => res.json())
+      .then(json =>
+        this.setState({
+          contacts: json
+        })
+      );
+  };
 
   handleClick = event => {
     this.setState({
@@ -49,7 +82,7 @@ class App extends Component {
 
   setSelectedPerson(event) {
     var selectedPerson = this.state.contacts.find(
-      person => event.target.value === person.name.last
+      person => event.target.value.toLowerCase() === person.last
     );
     this.setState({
       selectedPerson: selectedPerson,
@@ -61,21 +94,33 @@ class App extends Component {
     let selectedPerson = Object.assign({}, personObjfromEdit.selectedPerson);
     selectedPerson.email = personObjfromEdit.email;
     selectedPerson.cell = personObjfromEdit.cell;
-    selectedPerson.name.first = personObjfromEdit.first.toLowerCase();
-    selectedPerson.name.last = personObjfromEdit.last.toLowerCase();
-    selectedPerson.location.street = personObjfromEdit.street;
-    selectedPerson.location.city = personObjfromEdit.city.toLowerCase();
-    selectedPerson.location.state = personObjfromEdit.state.toLowerCase();
-    selectedPerson.location.postcode = personObjfromEdit.postcode;
+    selectedPerson.first = personObjfromEdit.first.toLowerCase();
+    selectedPerson.last = personObjfromEdit.last.toLowerCase();
+    selectedPerson.street = personObjfromEdit.street;
+    selectedPerson.city = personObjfromEdit.city.toLowerCase();
+    selectedPerson.state = personObjfromEdit.state.toLowerCase();
+    selectedPerson.postcode = personObjfromEdit.postcode;
+
+    let newContacts = this.state.contacts
 
     this.setState({
+      contacts: newContacts.map(person => {
+        if (person === personObjfromEdit.selectedPerson) {
+          return selectedPerson
+        } else {
+          return person
+        }
+      }),
       selectedPerson,
       clickedPersonLastName: personObjfromEdit.last.split(" ")[1],
       displayForm: false
     });
+
+    this.patchData(selectedPerson);
   };
 
   render() {
+    console.log(this.state.contacts);
     console.log(this.state.selectedPersonLastName);
     console.log(this.state);
     return (

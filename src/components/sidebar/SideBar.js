@@ -11,10 +11,11 @@ class SideBar extends React.Component {
     render() {
         var fullNames = this.props.contacts.map(
             person =>
-                this.capitalize(person.name.first) +
+                this.capitalize(person.first) +
                 " " +
-                this.capitalize(person.name.last)
+                this.capitalize(person.last)
         );
+        console.log(fullNames);
 
         var eachName = fullNames.map(name => (
             <div>

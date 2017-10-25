@@ -7,14 +7,14 @@ class EditCard extends React.Component {
 
         this.state = {
             selectedPerson: props.selectedPerson,
-            first: props.selectedPerson.name.first,
-            last: props.selectedPerson.name.last,
+            first: props.selectedPerson.first,
+            last: props.selectedPerson.last,
             email: props.selectedPerson.email,
             cell: props.selectedPerson.cell,
-            street: props.selectedPerson.location.street,
-            city: props.selectedPerson.location.city,
-            state: props.selectedPerson.location.state,
-            postcode: props.selectedPerson.location.postcode
+            street: props.selectedPerson.street,
+            city: props.selectedPerson.city,
+            state: props.selectedPerson.state,
+            postcode: props.selectedPerson.postcode
         };
     }
 
